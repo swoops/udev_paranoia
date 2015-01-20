@@ -28,6 +28,8 @@ Program Flow
 Installation
 ------------
 Run the following (installs to /opt/udev_paranoia/ by default):
+
+.. code-block:: bash
     $ make
     $ sudo make install
 
