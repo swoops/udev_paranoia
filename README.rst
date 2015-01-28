@@ -6,11 +6,12 @@ not see. I have been able to compromise computers in seconds with my Rubber Duck
 (http://hakshop.myshopify.com/products/usb-rubber-ducky-deluxe?variant=353378649)
 and I don't want the same to happen to me. This program does nothing but
 modify the file "/etc/udev/rules.d/11-to_rule_all.rules" (hereafter refered to as
-rule-11).
+rule-11).  See "Program Flow" below for details.
+
 
 WARNING: It is your responsibility to remove this rule before shutdown. If 
 left in place, you will likely encounter an error upon boot.  Simply
-remove the rule-11 file to fix this error.
+remove the rule-11 file to fix this error.  See instillation instructions.  
 
 Program Flow
 ------------
@@ -18,20 +19,34 @@ Program Flow
   * udev_paranoia exits
       udev_paranoia puts a "block all USB devices" rule inside of the rule-11
       file.
-  * rule-11 file exists and no arguments given:
+  * block all USB rule in effect and udev_paranoia run without any arguments
       The contents of the rule-11 file are replaced with a rule that denies any
       USB keyboard. udev_paranoia then sleeps 10 seconds and exits.
-  * rule-11 file exists and any arguemnt is given (yeah I am lazy):
-      udev_paranoia replaces the rule-11 file with one that will
-      allow ANY USB device. It then sleeps 10 seconds and exits.
+  * rule-11 file exists and any argument is given (yeah I am lazy):
+      udev_paranoia replaces the rule-11 file with one that will allow ANY 
+	  USB device. It then sleeps 10 seconds and exits.
 
 Installation
 ------------
 Run the following (installs to /opt/udev_paranoia/ by default):
 
 .. code-block:: bash
+
     $ make
     $ sudo make install
+
+To add an init script that will remove the rule-11 file at shutdown do this
+instead:
+
+.. code-block:: bash
+
+    $ make
+    $ sudo make install_init
+
+This is separate because I don't have a great deal of confidence init 
+(haha) so please let me know if it messes up.  When I go to Jessie and use
+Systemd I will update this to use Systemd as well.
+
 
 What? Why?
 ----------

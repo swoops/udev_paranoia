@@ -66,6 +66,7 @@ int main(int argc, char *argv[]){
     fprintf(fp, "%s", allow_rule); // having opened the file rw we overwrite it with something longer...
     if (ftruncate(fileno(fp), strlen(allow_rule)) != 0) return 27;
     fclose(fp);
+    printf("Temp allow rule added, sleeping\n");
     sleep(wait);
   }
   return 0;
@@ -101,10 +102,12 @@ void make_file(){
   /* printf("making the file now\n"); */
   FILE *fp;
   do_setuid();
-  if (( fp = fopen(fname, "w") ))
+  if (( fp = fopen(fname, "w") )){
     fprintf(fp, "%s", no_usb);
-  else
+    printf("Block all new USB rule added\n");
+  }else{
     fprintf(stderr, "ERROR: could not make paranoid udev rules\n");
+  }
   undo_setuid();
 }
 
