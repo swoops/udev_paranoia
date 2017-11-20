@@ -1,6 +1,9 @@
 udev_paranoia
 =============
 
+This is the old version! There is a new version that is much safer and done
+better. Check it out in the main branch.
+
 This program is aimed at calming my paranoia caused by having a USB port that I can
 not see. I have been able to compromise computers in seconds with my Rubber Ducky
 (http://hakshop.myshopify.com/products/usb-rubber-ducky-deluxe?variant=353378649)
