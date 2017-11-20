@@ -11,6 +11,9 @@ RULE_INST   = /etc/udev/rules.d/$(RULE)
 
 all: $(CLIENT) $(MASTER)
 
+debug: $(CLIENT) master.c common.o
+	$(CC) $(CFLAGS) -DDEBUG="True" -o $(MASTER) common.o master.c
+
 common.o: common.c 
 	$(CC) $(CFLAGS) -c common.c 
 

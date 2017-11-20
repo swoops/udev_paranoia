@@ -16,6 +16,8 @@ int check_device(){
 
   if ( perms & BLOCK_USBHID && strcmp(getenv("DRIVER"), "usbhid") == 0)
     return DENY;
+  if ( perms & BLOCK_USB_INTERFACE && strcmp(getenv("DEVTYPE"), "usb_interface") == 0)
+    return DENY;
 
   return ret;
 }
@@ -48,9 +50,10 @@ void log_env(int blk){
     s = *(environ+i);
   }
 
-  if ( perms & BLOCK_ALL )     fprintf(fp, "\t BLOCK_ALL\n");
-  if ( perms & ALLOW_ALL )     fprintf(fp, "\t ALLOW_ALL\n");
-  if ( perms & BLOCK_USBHID ) fprintf(fp, "\t BLOCK_USBHID\n");
+  if  (perms & BLOCK_ALL           )  fprintf(fp, "\t BLOCK_ALL\n");
+  if  (perms & ALLOW_ALL           )  fprintf(fp, "\t ALLOW_ALL\n");
+  if  (perms & BLOCK_USBHID        )  fprintf(fp, "\t BLOCK_USBHID\n");
+  if  (perms & BLOCK_USB_INTERFACE )  fprintf(fp, "\t BLOCK_USB_INTERFACE\n");
 
   if ( blk == ALLOW )
     fprintf(fp, "ALLOW\n");

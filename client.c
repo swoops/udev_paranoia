@@ -16,6 +16,7 @@ void read_perms(int perms){
   if ( perms & BLOCK_ALL ) printf("\t BLOCK_ALL\n");
   if ( perms & ALLOW_ALL ) printf("\t ALLOW_ALL\n");
   if ( perms & BLOCK_USBHID ) printf("\t BLOCK_USBHID\n");
+  if ( perms & BLOCK_USB_INTERFACE ) printf("\t BLOCK_USB_INTERFACE\n");
 }
 
 void set_perm_wrapper(int perms){
@@ -39,14 +40,18 @@ void help_menu( const char *pname, int err){
   FILE *fp = stdout;
   if ( err ) fp = stderr;
   fprintf(fp, "Usage: \n");
-  fprintf(fp, "%s [FLAGS]\n", pname);
+  fprintf(fp, "%s [PERMS] [OPTIONS]\n", pname);
   fprintf(fp, "FLAGS:\n");
+  fprintf(fp, "\t-b:   block all new USB devices (no wait)\n");
+  fprintf(fp, "\t-a:   allow everything\n");
+  fprintf(fp, "\t-d:   block \"dangerous\" (same as -n and -n)\n");
+  fprintf(fp, "\t-i:   block only usbhid devices (DRIVER==usbhid)\n");
+  fprintf(fp, "\t-n:   block only usb_interface (DEVTYPE=usb_interface)\n");
+  fprintf(fp, "\n");
+  fprintf(fp, "Options:\n");
   fprintf(fp, "\t-h:   help menu\n");
-  fprintf(fp, "\t-a:   allow all EVERYTHING\n");
-  fprintf(fp, "\t-i:   block only input/hid/hidraw devices\n");
-  fprintf(fp, "\t-b:   block EVERYTHING\n");
-  fprintf(fp, "\t-r:   read current permissions\n");
   fprintf(fp, "\t-t:   temp permission change wait time (0 for permanent))\n");
+  fprintf(fp, "\t-r:   read current permissions\n");
   exit(err);
 }
 
@@ -57,7 +62,7 @@ int main(int argc, char *argv[]) {
   if ( argc != 1 ) {
     /* parse commands */
     int c; // for command line parsing
-    while ((c = getopt (argc, argv, "habirt:")) != -1){
+    while ((c = getopt (argc, argv, "habidnrt:")) != -1){
       switch (c) {
         case 'h':   // help menu
           help_menu(argv[0], 0);
@@ -81,6 +86,21 @@ int main(int argc, char *argv[]) {
             fprintf(stderr, "[!!] can't use -u with -a or -b\n");
             help_menu(argv[0], 1);
           }
+          perms |= BLOCK_USBHID;
+          break;
+        case 'n': // block input/hid only
+          if ( perms & ALLOW_ALL || perms & BLOCK_ALL ){
+            fprintf(stderr, "[!!] can't use -n with -a or -b\n");
+            help_menu(argv[0], 1);
+          }
+          perms |= BLOCK_USB_INTERFACE;
+          break;
+        case 'd': // block input/hid only
+          if ( perms & ALLOW_ALL || perms & BLOCK_ALL ){
+            fprintf(stderr, "[!!] can't use -d with -a or -b\n");
+            help_menu(argv[0], 1);
+          }
+          perms |= BLOCK_USB_INTERFACE;
           perms |= BLOCK_USBHID;
           break;
         case 't': // set a time for a temporary change

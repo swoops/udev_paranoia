@@ -20,14 +20,18 @@ What it does
 
     $ /opt/udev_paranoia -h
     Usage:
-    ./udev_paranoia [FLAGS]
+    /opt/udev_paranoia [PERMS] [OPTIONS]
     FLAGS:
-        -h:   help menu
+        -b:   block EVERYTHING (no wait)
         -a:   allow all EVERYTHING
-        -i:   block only input/hid/hidraw devices
-        -b:   block EVERYTHING
-        -r:   read current permissions
+        -d:   block dangerious (same as -n and -n)
+        -i:   block only usbhid devices (DRIVER==usbhid)
+        -n:   block only usb_interface (DEVTYPE=usb_interface)
+
+    Options:
+        -h:   help menu
         -t:   temp permission change wait time (0 for permanent))
+        -r:   read current permissions
 
 By default udev_paranoia wants to block all USB devices. When you want to plug
 somethething in run it with -a or -i to temporarily allow USB devices. Adding a
