@@ -1,27 +1,38 @@
 CC = gcc
-
 CFLAGS = -Wall
 
-TARGET = udev_paranoia
+CLIENT = udev_paranoia
+MASTER = udev_paranoia_master
+RULE = 11-udev_paranoia.rules
 
-all: $(TARGET)
+CLIENT_INST = /opt/$(CLIENT)
+MASTER_INST = /lib/udev/$(MASTER)
+RULE_INST   = /etc/udev/rules.d/$(RULE)
 
-$(TARGET): udev.c
-	$(CC) $(CFLAGS) -o $(TARGET) udev.c
+all: $(CLIENT) $(MASTER)
+
+common.o: common.c 
+	$(CC) $(CFLAGS) -c common.c 
+
+$(CLIENT): client.c common.o
+	$(CC) $(CFLAGS) -o $(CLIENT) common.o client.c
+
+$(MASTER): master.c common.o
+	$(CC) $(CFLAGS) -o $(MASTER) common.o master.c
+
+install: $(CLIENT) $(MASTER) $(RULE)
+	install -o root -g root -m 111 $(CLIENT) $(CLIENT_INST)
+	install -o root -g root -m 111 $(MASTER) $(MASTER_INST)
+	install -o root -g root -m 611 $(RULE)   $(RULE_INST)
+	udevadm control --reload
+
+uninstall:
+	rm $(CLIENT_INST)
+	rm $(MASTER_INST)
+	rm $(RULE_INST)
+	udevadm control --reload
 
 clean: 
-	rm $(TARGET)
-
-uninstall: 
-	rm /opt/$(TARGET)
-	update-rc.d udev_shutdown.sh  remove
-	rm /etc/init.d/udev_shutdown.sh
-
-install: $(TARGET)
-	install -o root -g root -m 4111 $(TARGET) /opt/$(TARGET)
-
-
-install_init: $(TARGET)
-	install -o root -g root -m 4111 $(TARGET) /opt/$(TARGET)
-	install -o root -g root -m 0755 udev_shutdown.sh /etc/init.d/udev_shutdown.sh
-	update-rc.d udev_shutdown.sh defaults
+	rm $(MASTER)
+	rm $(CLIENT)
+	rm common.o

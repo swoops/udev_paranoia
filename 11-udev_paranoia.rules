@@ -1,0 +1,5 @@
+# udev_paranoia
+#
+# If udev_paranoia restrictions are in place (TEST key) then consult those
+# restrictions before allowing new USB devices.
+ACTION=="add", DRIVERS=="usb",  TEST=="/tmp/udev_paranoia_protection", PROGRAM="udev_paranoia_master", ATTR{authorized}:="0"
